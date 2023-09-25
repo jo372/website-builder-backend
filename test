@@ -1,0 +1,26 @@
+import factory
+from faker import Faker
+from itertools import count
+from project.models import Person
+
+fake = Faker()
+counter = count()  # Create a counter to generate unique IDs
+
+print("Hi, $name! I'm a test script for $project_name. I will create $range person(s) for you.")
+
+class PersonFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Person
+
+    # Remove the attribute definitions here
+
+for _ in range(int('$range')):
+    person = PersonFactory(
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
+        birth_date=fake.date_of_birth(minimum_age=18, maximum_age=80),
+        email=factory.LazyAttribute(lambda o: f'{fake.user_name()}{next(counter)}@example.com')
+    )
+    print(f"Created {person.first_name} {person.last_name} with email {person.email}")
+    
+print("Created $range person(s)")
